@@ -5,6 +5,8 @@
 
 **Vaikor** (<https://vaikor.com>, formerly Sidged) is an open, security-first **Personal Edge Intelligence Operating System and Runtime**.
 
+Vaikor is initialized by [VAIEV](https://vaiev.com). Its sibling project [WOUF](https://github.com/vaiev/wouf) is an agent team in a folder, set up with the AI tool you already use.
+
 Instead of wrapping a prompt around an LLM with ambient authority or shipping a classic desktop/app userland, Vaikor structures the system into three strict layers:
 
 ```text
