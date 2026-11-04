@@ -3,7 +3,7 @@
 [![License: Apache 2.0](https://img.shields.io/badge/Code-Apache_2.0-blue.svg)](LICENSE-CODE)
 [![License: CC BY 4.0](https://img.shields.io/badge/Specs-CC_BY_4.0-lightgrey.svg)](LICENSE)
 
-**Vaikor** (<https://vaikor.com>, formerly Sidged) is an open, security-first **Personal Edge Intelligence Operating System and Runtime**.
+**Vaikor** (formerly Sidged; website <https://sidged.com> until vaikor.com goes live) is an open, security-first **Personal Edge Intelligence Operating System and Runtime**.
 
 Vaikor is initialized by [VAIEV](https://vaiev.com). Its sibling project [WOUF](https://github.com/vaiev/wouf) is an agent team in a folder, set up with the AI tool you already use.
 
@@ -25,7 +25,7 @@ Instead of wrapping a prompt around an LLM with ambient authority or shipping a 
 +-----------------------------------------------------------------------+
 ```
 
-- **Website & Schemas:** <https://vaikor.com> (`https://vaikor.com/spec/schemas/`)
+- **Website:** <https://sidged.com> (vaikor.com follows). **Schema IDs:** `https://vaikor.com/spec/schemas/` (identifiers)
 - **Namespace:** `tag:vaikor.com,2026:`
 - **Prefix & Media Types:** `vkr.*` / `application/vnd.vaikor.*`
 
