@@ -2,7 +2,7 @@
 
 > **Status: Draft, not for implementation.** Shared conformance test vectors for the Vaikor drafts, phase 1. Licensed under Apache-2.0 ([LICENSE-CODE](../../LICENSE-CODE)).
 
-Each vector is a fixed input with an expected result, so that the validator in [../validate](../validate), the Python reference recorded in the [migration note](../../docs/analyse/02-SELFKIN-MIGRATION.md), and any other implementation can check themselves against the same files.
+Each vector is a fixed input with an expected result, so that the validator in [../validate](../validate), and any other implementation can check themselves against the same files.
 
 ## Layout
 

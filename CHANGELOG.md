@@ -22,7 +22,7 @@ repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](do
 
 ### Security
 - Workspace containment by directory handle (ROADMAP 11g): every workspace file operation resolves beneath one open `<workspace>/files` with `openat2(RESOLVE_BENEATH | RESOLVE_NO_SYMLINKS)`, a symlinked or foreign-owned root is refused; timers and reminders change under a lock with atomic replace and ids that never repeat; `vaikor task` records go through the record store; the swarm and signed-adapter prototypes and `vaikor swarm measure` are behind the `vaikor-cli` feature `experimental`.
-- One execution engine (ROADMAP 11f, 0002 R25, R26): `vaikor run`, `vaikor guard`, `vaikor task` and the companion run every step through `vaikor-cli/src/engine.rs`; every presenter proves possession over the plan digest and a fresh Core nonce (`vaikor run --holder-key`), an effectful run without a signed audit chain refuses before its first step, and the plan parser refuses members the plan schema does not allow (vector `plan.verify.021`, suite 0.13.1).
+- One execution engine (ROADMAP 11f, 0002 R25, R26): `vaikor run`, `vaikor guard`, `vaikor task` and the companion run every step through `runtime/vaikor-cli/src/engine.rs`; every presenter proves possession over the plan digest and a fresh Core nonce (`vaikor run --holder-key`), an effectful run without a signed audit chain refuses before its first step, and the plan parser refuses members the plan schema does not allow (vector `plan.verify.021`, suite 0.13.1).
 - No effect without a grant on `vaikor task` and the companion (0002 §6a, ROADMAP 11f): `vaikor init` signs a 30-day owner
   mandate and a grant policy; each plan runs under a one-hour task token inside it, every step authorised and reserved on
   the audit chain before its effect; renewal is `vaikor mandate renew` on a terminal.
@@ -45,7 +45,7 @@ repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](do
 - Implicit flow through `map` (0003 R10): a `map` over health records that sent one fixed message per element was
   accepted by the verifier and the Python reference (only the Cedar stage refused it), although the number of messages
   reveals the number of records. The list's labels now reach every `map` step; vector `plan.verify.016`; property tests
-  (`vaikor-verify/tests/ifc_properties.rs`) check the verifier and the Cedar stage against a reference of the label
+  (`runtime/vaikor-verify/tests/ifc_properties.rs`) check the verifier and the Cedar stage against a reference of the label
   rules in both directions (no leak accepted, no clean plan refused).
 - Audit before effect (invariant 9, WP 11e): `vaikor task` and the companion ran every step before they opened the
   audit chain; now the chain is verified first, each decision is appended before its effect and its outcome after, and
@@ -70,7 +70,7 @@ repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](do
   vectors `intent.linguist.020`–`025` and `intent.plan.009`–`011`.
 - Shared vectors for the intent boundary (`spec/test-vectors/intent/`, suite 0.12.0, 41 vectors): reply verification and
   derivation (0017 L2 to L7), intent plans (PL1 to PL5), spoken times across daylight saving time and durations (X6),
-  run by `vaikor-cli/tests/intent_vectors.rs`; `scripts/spec-coverage.py` reports which numbered rules have a vector.
+  run by `runtime/vaikor-cli/tests/intent_vectors.rs`; `scripts/spec-coverage.py` reports which numbered rules have a vector.
 - `scripts/repro-wasm.sh`: the browser verifier builds bit-for-bit from a git revision (fixed path, pinned toolchain,
   remapped paths) and prints its SHA-256 (WP 26).
 - Deterministic mutation fuzzing without new dependencies (`runtime/fuzz/mutate.rs`, `VAIKOR_FUZZ_ITERS`): the
@@ -85,7 +85,7 @@ repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](do
   UI; honest refusals for capabilities without a backend; records hold the step outcomes.
 - Intent plans (0017 §2b): every catalog intent declares an VKR-L3 plan; `intent_plan::plan_for_intent` instantiates it
   from verified slots and checks bound, grounding, input schemas, the verifier and Cedar (`check_plan` also for model plans).
-- Durations in en, de and Swiss German (`assets/duration-lexicon.json`: Bernese, Basel and Zurich forms, ISO 8601)
+- Durations in en, de and Swiss German (`runtime/vaikor-cli/assets/duration-lexicon.json`: Bernese, Basel and Zurich forms, ISO 8601)
   for `timer.start`.
 - Model -1 on the phone (WP 9b): `scripts/build-android-linguist.sh` bundles llama-server for arm64 as
   `libllama_server.so`; the app starts it on a private Unix socket when weights are present, verifies their SHA-256 and
@@ -96,7 +96,7 @@ repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](do
 - `SECURITY.md` (private reports through GitHub) and `CONTRIBUTING.md` (DCO, invariants, checks); the README opens
   with an honest status.
 - Spoken times (0017 X6): the reminder `time` slot is verbatim and the node resolves it (`vaikor-cli::when`,
-  `assets/time-lexicon.json`, en/de/gsw) in the device's IANA time zone, or refuses; `reminder.create` returns `due_at`.
+  `runtime/vaikor-cli/assets/time-lexicon.json`, en/de/gsw) in the device's IANA time zone, or refuses; `reminder.create` returns `due_at`.
   The canvas sends the device time zone with `node.init` and `intent.run`.
 - Linguist data as a dialect tree: `local-training/dialect_lexicon.json` (forms per region), node-bearing frames in
   the phrasebook, round-robin coverage, per-region eval buckets, length-grouped batches; `chat_split.py` and

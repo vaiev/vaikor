@@ -2,7 +2,7 @@
 
 > **Status: Draft, not for implementation.**
 
-Writing the v0.1 schemas showed 35 places where the drafts were ambiguous, silent, or inconsistent. The owner approved resolving them with the stricter choices the schemas had made, and the 2026-10-09 schema alignment revision folded those resolutions into the drafts (see [the migration note](../../docs/analyse/02-SELFKIN-MIGRATION.md)). This file lists what was resolved, so reviewers can trace each choice, and what genuinely remains open.
+Writing the v0.1 schemas showed 35 places where the drafts were ambiguous, silent, or inconsistent. The owner approved resolving them with the stricter choices the schemas had made, and the 2026-10-09 schema alignment revision folded those resolutions into the drafts (see [NOTICE](../../NOTICE)). This file lists what was resolved, so reviewers can trace each choice, and what genuinely remains open.
 
 ## Still Open
 

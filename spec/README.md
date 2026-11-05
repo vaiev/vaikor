@@ -17,4 +17,4 @@ python spec/validate/test_vectors.py --summary
 python -m unittest discover -s spec/validate -v
 ```
 
-Specification text in this repository is CC BY 4.0. This corpus and the validator are Apache-2.0. Provenance is recorded in [NOTICE](../NOTICE) and in the [migration note](../docs/analyse/02-SELFKIN-MIGRATION.md).
+Specification text in this repository is CC BY 4.0. This corpus and the validator are Apache-2.0. Provenance is recorded in [NOTICE](../NOTICE).
