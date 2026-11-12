@@ -44,6 +44,19 @@ jobs:
         run: |
           rustup show active-toolchain || rustup toolchain install stable --profile minimal
           rustup component add clippy
+      # Which crate may know which: runtime/layers.toml. Fails on a new violation and on a
+      # stale exception, so the exception list can only shrink.
+      - name: layer check
+        run: python3 tools/layercheck.py runtime/layers.toml
+      # L0 and L1 hold no I/O, no clock and no network: they must build without an OS.
+      # Not blocking until its first green run on the runner; then remove continue-on-error.
+      - name: L0 and L1 build for wasm32-unknown-unknown
+        continue-on-error: true
+        run: |
+          rustup target add wasm32-unknown-unknown
+          for crate in $(python3 tools/layercheck.py runtime/layers.toml --wasm32); do
+            cargo build --manifest-path runtime/Cargo.toml -p "$crate" --target wasm32-unknown-unknown --locked
+          done
       - name: cargo test --workspace
         run: cargo test --manifest-path runtime/Cargo.toml --workspace --locked
       - name: cargo clippy -D warnings

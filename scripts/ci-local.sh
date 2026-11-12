@@ -163,6 +163,7 @@ else
 fi
 
 # rust-ci.yml "test and clippy"
+run_step layers python3 tools/layercheck.py runtime/layers.toml
 run_step test   cargo test --manifest-path "$manifest" --workspace --locked -j "$jobs"
 run_step clippy cargo clippy --manifest-path "$manifest" --workspace --all-targets --locked -j "$jobs" -- -D warnings
 run_step test-experimental cargo test --manifest-path "$manifest" -p vaikor-cli -p vaikor-guard --features experimental --locked -j "$jobs"

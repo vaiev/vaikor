@@ -1,0 +1,95 @@
+# runtime/layers.toml: which crate may know which. Checked by tools/layercheck.py.
+# Phase 1 state: today's 12 crates, mapped to their target layer, with every
+# current violation listed as an exception that names the task removing it.
+# The list may only get shorter. Plan: docs/ROADMAP.md.
+version = 1
+manifest = "Cargo.toml"
+order = ["L0", "L1", "L2", "L3", "bin"]   # a crate may only know crates further left
+
+[layer.L0]
+crates = ["vaikor-core"]
+wasm32 = true            # CI builds these for wasm32-unknown-unknown
+forbid_unsafe = true     # lib root carries #![forbid(unsafe_code)]
+deny_crates = ["ureq", "reqwest", "hyper", "tokio", "wasmtime"]
+deny_features = ["chrono/clock", "chrono/now"]
+
+[layer.L1]
+crates = ["vaikor-capability", "vaikor-grant", "vaikor-record", "vaikor-verify", "vaikor-mcp"]
+wasm32 = true
+forbid_unsafe = true
+deny_crates = ["ureq", "reqwest", "hyper", "tokio", "wasmtime"]
+deny_features = ["chrono/clock", "chrono/now"]
+
+[layer.L2]
+crates = ["vaikor-log", "vaikor-gateway"]
+deny_crates = ["wasmtime"]
+
+[layer.L3]
+crates = ["vaikor-model", "vaikor-cli"]
+
+[layer.bin]
+crates = ["vaikor-guard", "vaikor-tui"]
+
+# Edges allowed inside one layer. Everything else inside a layer is forbidden.
+[[same_layer]]
+from = "vaikor-verify"
+to = "vaikor-capability"
+
+# From P2-10 on: the only files that may create the permit minter.
+# [seal]
+# symbol = "PermitMinter::pair"
+# allowed_in = ["vaikor-guard/src/main.rs"]
+
+# ---------------------------------------------------------------------------
+# Exceptions: the violations that exist at commit 5e0fd2d, found by the first
+# run of the check. Each names the task that removes it. A violation without
+# an exception fails the build, and so does an exception without a violation.
+# ---------------------------------------------------------------------------
+
+[[exception]]
+kind = "edge"
+from = "vaikor-record"
+to = "vaikor-grant"
+removed_by = "P2-2"
+
+[[exception]]
+kind = "edge"
+from = "vaikor-record"
+to = "vaikor-log"       # hidden behind cfg(not(target_arch = "wasm32"))
+removed_by = "P2-2"
+
+[[exception]]
+kind = "dev-edge"
+from = "vaikor-record"
+to = "vaikor-gateway"
+removed_by = "P2-2"
+
+[[exception]]
+kind = "edge"
+from = "vaikor-verify"
+to = "vaikor-record"
+removed_by = "P2-3"
+
+[[exception]]
+kind = "edge"
+from = "vaikor-verify"
+to = "vaikor-grant"
+removed_by = "P2-3"
+
+[[exception]]
+kind = "feature"
+crate = "vaikor-verify"
+feature = "chrono/clock"
+removed_by = "P2-3"
+
+[[exception]]
+kind = "feature"
+crate = "vaikor-verify"
+feature = "chrono/now"
+removed_by = "P2-3"
+
+[[exception]]
+kind = "edge"
+from = "vaikor-mcp"
+to = "vaikor-capability"
+removed_by = "P2-5"
