@@ -280,7 +280,7 @@ fn account(
     if cap.effects.iter().any(|effect| effect == "egress") {
         egress.push(capability.to_string());
         for class in arg_labels.iter().chain(cap.data_classes.iter()) {
-            if sensitive(class) && !policy.allow_egress(class, capability) {
+            if crate::flow::is_sensitive_class(class) && !policy.allow_egress(class, capability) {
                 problems.push(format!(
                     "{id}: {class} reaches egress capability {capability}"
                 ));
@@ -423,13 +423,6 @@ fn is_money(amount: &str, currency: &str) -> bool {
         None => digits(amount),
     };
     amount_ok && currency.len() == 3 && currency.bytes().all(|b| b.is_ascii_uppercase())
-}
-
-fn sensitive(name: &str) -> bool {
-    name == "health.records"
-        || name.starts_with("health.records.")
-        || name == "secrets"
-        || name.starts_with("secrets.")
 }
 
 #[derive(Clone, Debug)]

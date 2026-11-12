@@ -204,6 +204,9 @@ impl CedarFlowPolicy {
 }
 
 /// Exact dot-boundary sensitivity rule (Spec 0013 §4 R8, `plan.flow.010`).
+///
+/// The only definition of "sensitive" in this crate: the built-in egress rule of the plan
+/// verifier (`plan.rs`) and the Cedar flow check both call it.
 pub fn is_sensitive_class(name: &str) -> bool {
     name == "health.records" || name.starts_with("health.records.") || is_secrets_class(name)
 }
