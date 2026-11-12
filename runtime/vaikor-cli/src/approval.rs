@@ -2208,7 +2208,10 @@ mod tests {
         let mode = format!("unix:{}", dir.join("control.sock").display());
         let mut c = config(&mode, &[1000], false);
         c.approver = Some(me());
-        assert!(refusal(open_channel(&c).as_ref()).contains("Core uid"));
+        let reason = refusal(open_channel(&c).as_ref());
+        // As root the approver uid itself is refused, before the same-uid check is reached.
+        let expected = if me() == 0 { "(root)" } else { "Core uid" };
+        assert!(reason.contains(expected), "{reason}");
         assert!(!dir.join("control.sock").exists());
         cleanup(&dir);
     }
