@@ -6,6 +6,8 @@
 //! signing input. The policy hook can be the Cedar engine. See
 //! `docs/specs/0002-grant.md`.
 
+#![forbid(unsafe_code)]
+
 mod cedar_eval;
 mod chain;
 mod crypto;

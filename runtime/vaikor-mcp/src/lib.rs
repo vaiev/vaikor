@@ -1,6 +1,8 @@
 //! MCP binding from VKR-L1. Descriptors ride at `_meta["com.vaikor/capability"]`.
 //! Hints in `annotations` are ignored.
 
+#![forbid(unsafe_code)]
+
 use vaikor_capability::Registry;
 
 pub fn registry_from_tools(document: &serde_json::Value) -> Result<Registry, String> {

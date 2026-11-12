@@ -1,4 +1,7 @@
 //! VKR-L0 0012 canonical dCBOR and signed Records. File storage is available in `store`.
+
+#![forbid(unsafe_code)]
+
 use base64::{engine::general_purpose::URL_SAFE_NO_PAD, Engine};
 use serde_json::{Map, Value};
 use sha2::{Digest, Sha256};

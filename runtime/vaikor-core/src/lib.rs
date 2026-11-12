@@ -3,8 +3,11 @@
 //! No I/O and no third-party crates. Capability descriptors, grants, and
 //! plans stay in their own crates. This module is the record they share.
 
+#![forbid(unsafe_code)]
+
 /// One registered capability, reduced to the fields the verifier and the
 /// gateway need. The full descriptor remains the JSON document in `spec/`.
+
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct CapabilityRecord {
     pub id: String,

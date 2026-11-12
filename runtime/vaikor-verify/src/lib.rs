@@ -5,6 +5,8 @@
 //! functions are registered. Sensitive egress uses `FlowPolicy`; owner-signed
 //! stored-plan authentication and per-run checks are in `stored`.
 
+#![forbid(unsafe_code)]
+
 mod plan;
 
 pub use plan::{

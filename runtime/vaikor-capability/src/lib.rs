@@ -1,5 +1,7 @@
 //! Capability registry. Looks up a descriptor by `tag:vaikor.com,2026:capability:…`.
 
+#![forbid(unsafe_code)]
+
 use std::collections::HashMap;
 
 pub mod schema;
