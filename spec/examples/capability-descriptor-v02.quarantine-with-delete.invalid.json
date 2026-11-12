@@ -1,0 +1,43 @@
+{
+  "v": "0.2",
+  "id": "tag:vaikor.com,2026:capability:draft.put",
+  "title": "Store a booking draft",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "account": {
+        "type": "string"
+      },
+      "amount": {
+        "type": "string",
+        "format": "decimal"
+      }
+    },
+    "required": [
+      "account",
+      "amount"
+    ],
+    "additionalProperties": false
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "string"
+      }
+    },
+    "required": [
+      "id"
+    ],
+    "additionalProperties": false
+  },
+  "effects": [
+    "write",
+    "delete"
+  ],
+  "data_classes": [
+    "finance.documents"
+  ],
+  "consequential": true,
+  "quarantine": true
+}

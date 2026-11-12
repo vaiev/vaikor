@@ -32,3 +32,9 @@ Reason codes for the refusal object ([schemas/refusal.schema.json](../schemas/re
 | `legacy-forbidden` | Owner policy forbids legacy methods for this data or action | Vaikor L6 |
 | `proof-required` | Extra proof needed (fresh anonymous credential, proof-of-work, reduced quota) | Vaikor L7 |
 | `unavailable` | Temporarily unable to process; retry later | Vaikor L6 |
+| `bad-input` | Resolved arguments do not satisfy the capability's `input_schema` | Vaikor L3 (0003 E5) |
+| `bad-output` | A capability's output does not satisfy its `output_schema` | Vaikor L3 (0003 E7) |
+| `bound-exceeded` | The list of a `map` is longer than its `bound` | Vaikor L3 (0003 E6) |
+| `label-exceeds-static` | A run-time label is not below the label the verifier computed | Vaikor L3 (0003 E8) |
+| `quota-exceeded` | The quota of quarantined records for the mandate is used up | Vaikor L3 (0003 Q4) |
+| `too-large` | A value to be shown for declassification is above the size limit | Vaikor L3 (0003 A2) |

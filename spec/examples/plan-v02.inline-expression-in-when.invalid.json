@@ -1,0 +1,85 @@
+{
+  "v": "0.2",
+  "goal": "Draft a booking for a QR-bill",
+  "inputs": {
+    "file": {
+      "type": {
+        "type": "blob",
+        "media": "application/pdf"
+      },
+      "label": {
+        "classes": [
+          "finance.documents"
+        ],
+        "integrity": "untrusted"
+      }
+    }
+  },
+  "budget": {
+    "tokens": 64,
+    "wall_s": 120
+  },
+  "steps": [
+    {
+      "id": "qr",
+      "kind": "call",
+      "capability": "tag:vaikor.com,2026:capability:qr.decode",
+      "args": {
+        "doc": {
+          "ref": "file"
+        }
+      }
+    },
+    {
+      "id": "iban",
+      "kind": "call",
+      "capability": "tag:vaikor.com,2026:capability:iban.check",
+      "args": {
+        "iban": {
+          "ref": "qr",
+          "field": "iban"
+        }
+      }
+    },
+    {
+      "id": "acct",
+      "kind": "call",
+      "capability": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+      "args": {
+        "creditor": {
+          "ref": "qr",
+          "field": "creditor"
+        },
+        "amount": {
+          "ref": "qr",
+          "field": "amount"
+        }
+      }
+    },
+    {
+      "id": "sure",
+      "kind": "expr",
+      "expr": "iban.ok && acct.confidence >= 800"
+    },
+    {
+      "id": "draft",
+      "kind": "call",
+      "capability": "tag:vaikor.com,2026:capability:draft.put",
+      "args": {
+        "account": {
+          "ref": "acct",
+          "field": "account"
+        },
+        "amount": {
+          "ref": "qr",
+          "field": "amount"
+        }
+      },
+      "when": "iban.ok && acct.confidence >= 800"
+    }
+  ],
+  "result": {
+    "ref": "draft",
+    "field": "id"
+  }
+}

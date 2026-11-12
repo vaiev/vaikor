@@ -1,0 +1,1533 @@
+{
+  "category": "plan",
+  "description": "VKR-L3 v0.2 execution (0003 section 6): step states, skip and stop, lanes, audit trace order.",
+  "vectors": [
+    {
+      "id": "plan.v02-run.001",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "3.6"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E4"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "cfg",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:settings.get",
+              "args": {}
+            },
+            {
+              "id": "share",
+              "kind": "expr",
+              "expr": "10 / cfg.limit"
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "lit": "done"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:settings.get",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "nickname": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "limit",
+                "owner"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "script": {
+          "cfg": {
+            "output": {
+              "enabled": true,
+              "limit": 0,
+              "owner": "ada"
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "cfg",
+              "state": "completed",
+              "output": {
+                "enabled": true,
+                "limit": 0,
+                "owner": "ada"
+              }
+            },
+            {
+              "id": "share",
+              "state": "skipped",
+              "reason": "undefined"
+            },
+            {
+              "id": "note",
+              "state": "skipped",
+              "reason": "stopped"
+            }
+          ],
+          "trace": [
+            {
+              "step": "cfg",
+              "entry": "note"
+            },
+            {
+              "step": "share",
+              "entry": "note"
+            },
+            {
+              "step": "note",
+              "entry": "note"
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "undefined-expr-stops-by-default: an undefined expr ends skipped (undefined) and, by default, stops the plan"
+    },
+    {
+      "id": "plan.v02-run.002",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E3"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E4"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V5"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "who",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "args": {
+                "name": {
+                  "lit": "bea"
+                }
+              },
+              "on_refuse": "continue"
+            },
+            {
+              "id": "use",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "ref": "who",
+                  "field": "address"
+                }
+              }
+            },
+            {
+              "id": "missed",
+              "kind": "expr",
+              "expr": "!done(who)"
+            },
+            {
+              "id": "fallback",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "lit": "lookup failed"
+                }
+              },
+              "when": "missed"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:contacts.lookup",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "contacts"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ],
+        "script": {
+          "who": {
+            "state": "failed",
+            "reason": "unavailable"
+          },
+          "fallback": {
+            "output": {
+              "id": "n1"
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "who",
+              "state": "failed",
+              "reason": "unavailable"
+            },
+            {
+              "id": "use",
+              "state": "skipped",
+              "reason": "dependency"
+            },
+            {
+              "id": "missed",
+              "state": "completed",
+              "output": true
+            },
+            {
+              "id": "fallback",
+              "state": "completed",
+              "output": {
+                "id": "n1"
+              }
+            }
+          ],
+          "trace": [
+            {
+              "step": "who",
+              "entry": "note"
+            },
+            {
+              "step": "use",
+              "entry": "note"
+            },
+            {
+              "step": "missed",
+              "entry": "note"
+            },
+            {
+              "step": "fallback",
+              "entry": "decision"
+            },
+            {
+              "sync": true
+            },
+            {
+              "step": "fallback",
+              "entry": "outcome"
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "continue-then-compensate: with continue the plan goes on; dependents are skipped; done() guards a compensating step"
+    },
+    {
+      "id": "plan.v02-run.003",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E6"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "each",
+              "kind": "map",
+              "capability": "tag:vaikor.com,2026:capability:iban.check",
+              "over": {
+                "ref": "mails",
+                "field": "items"
+              },
+              "bound": 2,
+              "args": {
+                "iban": {
+                  "item": true,
+                  "field": "sender"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:iban.check",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "iban": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "iban"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "ok"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "script": {
+          "mails": {
+            "output": {
+              "items": [
+                {
+                  "id": "m1",
+                  "subject": "Invoice 1",
+                  "sender": "CH1"
+                },
+                {
+                  "id": "m2",
+                  "subject": "Invoice 2",
+                  "sender": "CH2"
+                },
+                {
+                  "id": "m3",
+                  "subject": "Invoice 3",
+                  "sender": "CH3"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "mails",
+              "state": "completed",
+              "output": {
+                "items": [
+                  {
+                    "id": "m1",
+                    "subject": "Invoice 1",
+                    "sender": "CH1"
+                  },
+                  {
+                    "id": "m2",
+                    "subject": "Invoice 2",
+                    "sender": "CH2"
+                  },
+                  {
+                    "id": "m3",
+                    "subject": "Invoice 3",
+                    "sender": "CH3"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "each",
+              "state": "refused",
+              "reason": "bound-exceeded"
+            }
+          ],
+          "trace": [
+            {
+              "step": "mails",
+              "entry": "note"
+            },
+            {
+              "step": "each",
+              "entry": "note"
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "map-over-bound-refused: a list longer than bound refuses the map before any element runs"
+    },
+    {
+      "id": "plan.v02-run.004",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E8"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "Q3"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "drafts",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:draft.list",
+              "args": {}
+            },
+            {
+              "id": "n",
+              "kind": "expr",
+              "expr": "size(drafts.items)"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:draft.list",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "finance.documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "string",
+                        "format": "decimal"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "account",
+                      "amount"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "script": {
+          "drafts": {
+            "output": {
+              "items": []
+            },
+            "label": {
+              "classes": [
+                "health.records"
+              ],
+              "integrity": "untrusted"
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "drafts",
+              "state": "refused",
+              "reason": "label-exceeds-static"
+            },
+            {
+              "id": "n",
+              "state": "skipped",
+              "reason": "stopped"
+            }
+          ],
+          "trace": [
+            {
+              "step": "drafts",
+              "entry": "note"
+            },
+            {
+              "step": "n",
+              "entry": "note"
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "runtime-label-exceeds-static: a run-time label that is not below the static label refuses the step"
+    },
+    {
+      "id": "plan.v02-run.005",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E11"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "6.3"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "inputs": {
+            "file": {
+              "type": {
+                "type": "blob",
+                "media": "application/pdf"
+              },
+              "label": {
+                "classes": [
+                  "finance.documents"
+                ],
+                "integrity": "untrusted"
+              }
+            }
+          },
+          "steps": [
+            {
+              "id": "qr",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:qr.decode",
+              "args": {
+                "doc": {
+                  "ref": "file"
+                }
+              }
+            },
+            {
+              "id": "iban",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:iban.check",
+              "args": {
+                "iban": {
+                  "ref": "qr",
+                  "field": "iban"
+                }
+              }
+            },
+            {
+              "id": "acct",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+              "args": {
+                "creditor": {
+                  "ref": "qr",
+                  "field": "creditor"
+                },
+                "amount": {
+                  "ref": "qr",
+                  "field": "amount"
+                }
+              }
+            },
+            {
+              "id": "sure",
+              "kind": "expr",
+              "expr": "iban.ok && acct.confidence >= 800"
+            },
+            {
+              "id": "draft",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:draft.put",
+              "args": {
+                "account": {
+                  "ref": "acct",
+                  "field": "account"
+                },
+                "amount": {
+                  "ref": "qr",
+                  "field": "amount"
+                }
+              },
+              "when": "sure"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:draft.put",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "finance.documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                }
+              },
+              "required": [
+                "account",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "quarantine": true
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:iban.check",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "iban": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "iban"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "ok"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "creditor": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                }
+              },
+              "required": [
+                "creditor",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "confidence": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                }
+              },
+              "required": [
+                "account",
+                "confidence"
+              ],
+              "additionalProperties": false
+            },
+            "model": {
+              "base": "sha256:abababababababababababababababababababababababababababababababab",
+              "adapter": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "max_tokens": 64
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:qr.decode",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "doc": {
+                  "type": "blob",
+                  "media": "application/pdf"
+                }
+              },
+              "required": [
+                "doc"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "iban": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                },
+                "creditor": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "iban",
+                "amount",
+                "creditor"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "inputs": {
+          "file": {
+            "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+            "media": "application/pdf",
+            "size": 48213
+          }
+        },
+        "script": {
+          "qr": {
+            "output": {
+              "iban": "CH9300762011623852957",
+              "amount": "118.40",
+              "creditor": "ACME AG"
+            }
+          },
+          "iban": {
+            "output": {
+              "ok": true
+            }
+          },
+          "acct": {
+            "output": {
+              "account": "6500",
+              "confidence": 912
+            }
+          },
+          "draft": {
+            "output": {
+              "id": "d1"
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "qr",
+              "state": "completed",
+              "output": {
+                "iban": "CH9300762011623852957",
+                "amount": "118.40",
+                "creditor": "ACME AG"
+              }
+            },
+            {
+              "id": "iban",
+              "state": "completed",
+              "output": {
+                "ok": true
+              }
+            },
+            {
+              "id": "acct",
+              "state": "completed",
+              "output": {
+                "account": "6500",
+                "confidence": 912
+              }
+            },
+            {
+              "id": "sure",
+              "state": "completed",
+              "output": true
+            },
+            {
+              "id": "draft",
+              "state": "completed",
+              "output": {
+                "id": "d1"
+              }
+            }
+          ],
+          "trace": [
+            {
+              "step": "qr",
+              "entry": "note"
+            },
+            {
+              "step": "iban",
+              "entry": "note"
+            },
+            {
+              "step": "acct",
+              "entry": "note"
+            },
+            {
+              "step": "sure",
+              "entry": "note"
+            },
+            {
+              "step": "draft",
+              "entry": "decision"
+            },
+            {
+              "sync": true
+            },
+            {
+              "step": "draft",
+              "entry": "outcome"
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "buffered-entries-flush-before-airlock: internal entries are buffered and become durable with the next airlock decision, before the effect"
+    },
+    {
+      "id": "plan.v02-run.006",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E6"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E13"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "each",
+              "kind": "map",
+              "capability": "tag:vaikor.com,2026:capability:iban.check",
+              "over": {
+                "ref": "mails",
+                "field": "items"
+              },
+              "bound": 8,
+              "parallel": true,
+              "args": {
+                "iban": {
+                  "item": true,
+                  "field": "sender"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:iban.check",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "iban": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "iban"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "ok"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "script": {
+          "mails": {
+            "output": {
+              "items": [
+                {
+                  "id": "m1",
+                  "subject": "Invoice 1",
+                  "sender": "CH1"
+                },
+                {
+                  "id": "m2",
+                  "subject": "Invoice 2",
+                  "sender": "CH2"
+                },
+                {
+                  "id": "m3",
+                  "subject": "Invoice 3",
+                  "sender": "CH3"
+                }
+              ]
+            }
+          },
+          "each": {
+            "elements": [
+              {
+                "output": {
+                  "ok": true
+                }
+              },
+              {
+                "output": {
+                  "ok": false
+                }
+              },
+              {
+                "output": {
+                  "ok": true
+                }
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "mails",
+              "state": "completed",
+              "output": {
+                "items": [
+                  {
+                    "id": "m1",
+                    "subject": "Invoice 1",
+                    "sender": "CH1"
+                  },
+                  {
+                    "id": "m2",
+                    "subject": "Invoice 2",
+                    "sender": "CH2"
+                  },
+                  {
+                    "id": "m3",
+                    "subject": "Invoice 3",
+                    "sender": "CH3"
+                  }
+                ]
+              }
+            },
+            {
+              "id": "each",
+              "state": "completed",
+              "output": [
+                {
+                  "ok": true
+                },
+                {
+                  "ok": false
+                },
+                {
+                  "ok": true
+                }
+              ]
+            }
+          ],
+          "trace": [
+            {
+              "step": "mails",
+              "entry": "note"
+            },
+            {
+              "step": "each",
+              "entry": "note",
+              "element": 0
+            },
+            {
+              "step": "each",
+              "entry": "note",
+              "element": 1
+            },
+            {
+              "step": "each",
+              "entry": "note",
+              "element": 2
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "parallel-map-keeps-order: a parallel map returns outputs in input order and orders audit entries by element index"
+    },
+    {
+      "id": "plan.v02-run.007",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E10"
+        }
+      ],
+      "operation": "plan-run",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "post",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:ledger.post",
+              "args": {
+                "account": {
+                  "lit": "6500"
+                },
+                "amount": {
+                  "lit": "118.40"
+                }
+              },
+              "retry": 2
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:ledger.post",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "finance.transactions"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                }
+              },
+              "required": [
+                "account",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "idempotent": true
+          }
+        ],
+        "script": {
+          "post": {
+            "attempts": [
+              {
+                "state": "failed",
+                "reason": "unavailable"
+              },
+              {
+                "output": {
+                  "id": "t1"
+                }
+              }
+            ]
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "steps": [
+            {
+              "id": "post",
+              "state": "completed",
+              "output": {
+                "id": "t1"
+              }
+            }
+          ],
+          "trace": [
+            {
+              "step": "post",
+              "entry": "decision",
+              "attempt": 1
+            },
+            {
+              "sync": true
+            },
+            {
+              "step": "post",
+              "entry": "outcome",
+              "attempt": 1
+            },
+            {
+              "step": "post",
+              "entry": "decision",
+              "attempt": 2
+            },
+            {
+              "sync": true
+            },
+            {
+              "step": "post",
+              "entry": "outcome",
+              "attempt": 2
+            },
+            {
+              "sync": true
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "retry-writes-a-decision-per-attempt: each attempt of an airlock step has its own durable decision, hence its own permit"
+    }
+  ]
+}

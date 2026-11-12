@@ -3,7 +3,7 @@
 > **Status:** Draft v0. Not a layer and not a conformance target yet. No schema, no vectors in this draft.
 > **Date:** 2026-10-15
 > **Spec:** Bundle package (cross-cutting; extends [0011-agent-bundle.md](0011-agent-bundle.md))
-> **Basis:** [VISION.md](../vision/VISION.md) sections 5 and 7, [0011-agent-bundle.md](0011-agent-bundle.md), [0001-capability.md](0001-capability.md), [0002-grant.md](0002-grant.md), [0003-plan.md](0003-plan.md), `spec/schemas/module-manifest.schema.json`, and [0012-records.md](0012-records.md) (`dcbor` profile). [0013](0013-cbor-plans-ifc.md) (stored plans) is proposed.
+> **Basis:** [VISION.md](../vision/VISION.md) sections 5 and 7, [0011-agent-bundle.md](0011-agent-bundle.md), [0001-capability.md](0001-capability.md), [0002-grant.md](0002-grant.md), [0003-plan-v0.1.md](0003-plan-v0.1.md), `spec/schemas/module-manifest.schema.json`, and [0012-records.md](0012-records.md) (`dcbor` profile). [0013](0013-cbor-plans-ifc.md) (stored plans) is proposed.
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as in BCP 14 (RFC 2119 and RFC 8174) when they appear in capitals.
 

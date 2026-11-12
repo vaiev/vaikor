@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://vaikor.com/spec/schemas/plan.schema.json",
   "title": "Vaikor plan (v0.1)",
-  "description": "A verifiable plan of capability calls, CEL expressions, and bounded maps (VKR-L3). Status: Draft v0.1. Normative rules are in docs/specs/0003-plan.md.",
+  "description": "A verifiable plan of capability calls, CEL expressions, and bounded maps (VKR-L3). Status: Draft v0.1. Normative rules are in docs/specs/0003-plan-v0.1.md.",
   "type": "object",
   "additionalProperties": false,
   "required": ["v", "steps"],

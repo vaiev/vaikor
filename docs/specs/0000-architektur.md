@@ -48,7 +48,7 @@ Layer specifications use the identifiers VKR-L0 through VKR-L8. Short names L0â€
 |---|---|---|
 | VKR-L0 + VKR-L1 | `docs/specs/0001-capability.md` | Core objects and the capability descriptor, including the MCP binding |
 | VKR-L2 | `docs/specs/0002-grant.md` | Grants |
-| VKR-L3 | `docs/specs/0003-plan.md` | Plan language and verifier |
+| VKR-L3 | `docs/specs/0003-plan-v0.1.md` (implemented), `docs/specs/0003-plan.md` (v0.2, draft) | Plan language and verifier |
 | VKR-L4 | `docs/specs/0004-view.md` | Views and Trusted UI |
 | VKR-L5 | `docs/specs/0005-core.md` | Core contract |
 | VKR-L6 | `docs/specs/0006-exchange.md` | Exchange, peer-to-peer, legacy, MCP/A2A bindings |

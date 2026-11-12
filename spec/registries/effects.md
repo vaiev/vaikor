@@ -6,6 +6,7 @@ An effect is what a capability does to the world. A descriptor lists every effec
 
 | Code | Meaning |
 |---|---|
+| `compute` | Compute an output from the arguments only. Observes and changes nothing outside the call. Needs no data class and is never consequential. Added in descriptor v0.2 (spec 0003 v0.2 section 7). |
 | `read` | Observe state. Does not change it and does not send it off the device by itself. |
 | `write` | Create or update state. Does not by itself send data off the device. |
 | `delete` | Remove or destroy state. |

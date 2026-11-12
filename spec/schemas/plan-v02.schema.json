@@ -1,0 +1,979 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://vaikor.com/spec/schemas/plan-v02.schema.json",
+  "title": "Vaikor plan (v0.2)",
+  "description": "A verifiable plan or plan template: capability calls, bounded maps, expressions, asks, declassifications and views (VKR-L3 v0.2). Status: Draft v0.2. Normative rules are in docs/specs/0003-plan.md; this schema covers their structural part (4.1) only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "v",
+    "steps"
+  ],
+  "properties": {
+    "v": {
+      "const": "0.2"
+    },
+    "goal": {
+      "type": "string",
+      "maxLength": 256
+    },
+    "inputs": {
+      "type": "object",
+      "maxProperties": 16,
+      "propertyNames": {
+        "$ref": "#/$defs/name"
+      },
+      "additionalProperties": {
+        "$ref": "#/$defs/input"
+      }
+    },
+    "budget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "max": {
+          "$ref": "common.schema.json#/$defs/money"
+        },
+        "tokens": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "wall_s": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "steps": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 32,
+      "items": {
+        "$ref": "#/$defs/step"
+      }
+    },
+    "result": {
+      "$ref": "#/$defs/ref"
+    }
+  },
+  "$defs": {
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_]{0,31}$"
+    },
+    "path": {
+      "description": "One or more member names joined by a dot (0003 1.4).",
+      "type": "string",
+      "pattern": "^[A-Za-z_][A-Za-z0-9_]{0,63}(\\.[A-Za-z_][A-Za-z0-9_]{0,63}){0,7}$"
+    },
+    "capabilityId": {
+      "type": "string",
+      "pattern": "^tag:vaikor\\.com,2026:capability:[A-Za-z0-9._-]{1,128}$"
+    },
+    "typeSchema": {
+      "description": "The JSON Schema subset of 0003 2.3.",
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "boolean"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "integer"
+            },
+            "minimum": {
+              "type": "integer"
+            },
+            "maximum": {
+              "type": "integer"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "format"
+          ],
+          "properties": {
+            "type": {
+              "const": "string"
+            },
+            "format": {
+              "const": "decimal"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type"
+          ],
+          "properties": {
+            "type": {
+              "const": "string"
+            },
+            "maxLength": {
+              "type": "integer",
+              "minimum": 0
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "enum"
+          ],
+          "properties": {
+            "enum": {
+              "type": "array",
+              "minItems": 1,
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "items",
+            "maxItems"
+          ],
+          "properties": {
+            "type": {
+              "const": "array"
+            },
+            "items": {
+              "$ref": "#/$defs/typeSchema"
+            },
+            "maxItems": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 1024
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "additionalProperties"
+          ],
+          "properties": {
+            "type": {
+              "const": "object"
+            },
+            "properties": {
+              "type": "object",
+              "additionalProperties": {
+                "$ref": "#/$defs/typeSchema"
+              }
+            },
+            "required": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {
+                "type": "string"
+              }
+            },
+            "additionalProperties": {
+              "const": false
+            }
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "type",
+            "media"
+          ],
+          "properties": {
+            "type": {
+              "const": "blob"
+            },
+            "media": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      ]
+    },
+    "label": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "classes",
+        "integrity"
+      ],
+      "properties": {
+        "classes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/dataClass"
+          }
+        },
+        "integrity": {
+          "enum": [
+            "trusted",
+            "untrusted"
+          ]
+        }
+      }
+    },
+    "input": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "type",
+        "label"
+      ],
+      "properties": {
+        "type": {
+          "$ref": "#/$defs/typeSchema"
+        },
+        "label": {
+          "$ref": "#/$defs/label"
+        }
+      }
+    },
+    "literal": {
+      "description": "A constant (0003 1.4): no null, no fractional number.",
+      "anyOf": [
+        {
+          "type": [
+            "string",
+            "integer",
+            "boolean"
+          ]
+        },
+        {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/literal"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/$defs/literal"
+          }
+        }
+      ]
+    },
+    "ref": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ref"
+      ],
+      "properties": {
+        "ref": {
+          "$ref": "#/$defs/name"
+        },
+        "field": {
+          "$ref": "#/$defs/path"
+        }
+      }
+    },
+    "arg": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "lit"
+          ],
+          "properties": {
+            "lit": {
+              "$ref": "#/$defs/literal"
+            }
+          }
+        },
+        {
+          "$ref": "#/$defs/ref"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "item"
+          ],
+          "properties": {
+            "item": {
+              "const": true
+            },
+            "field": {
+              "$ref": "#/$defs/path"
+            }
+          }
+        }
+      ]
+    },
+    "args": {
+      "type": "object",
+      "maxProperties": 16,
+      "additionalProperties": {
+        "$ref": "#/$defs/arg"
+      }
+    },
+    "step": {
+      "type": "object",
+      "required": [
+        "id",
+        "kind"
+      ],
+      "properties": {
+        "id": {
+          "$ref": "#/$defs/name"
+        },
+        "kind": {
+          "enum": [
+            "call",
+            "map",
+            "expr",
+            "ask",
+            "declassify",
+            "view"
+          ]
+        },
+        "when": {
+          "$ref": "#/$defs/name"
+        },
+        "on_refuse": {
+          "enum": [
+            "stop",
+            "continue"
+          ]
+        },
+        "retry": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 3
+        },
+        "timeout_s": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 3600
+        },
+        "capability": {
+          "$ref": "#/$defs/capabilityId"
+        },
+        "args": {
+          "$ref": "#/$defs/args"
+        },
+        "approval": {
+          "type": "boolean"
+        },
+        "over": {
+          "$ref": "#/$defs/ref"
+        },
+        "bound": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 32
+        },
+        "parallel": {
+          "type": "boolean"
+        },
+        "expr": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1024
+        },
+        "prompt": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "options": {
+          "$ref": "#/$defs/ref"
+        },
+        "show": {
+          "$ref": "#/$defs/args"
+        },
+        "value": {
+          "$ref": "#/$defs/ref"
+        },
+        "drop": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "$ref": "common.schema.json#/$defs/dataClass"
+          }
+        },
+        "endorse": {
+          "type": "boolean"
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "bind": {
+          "$ref": "#/$defs/args"
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "call"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "capability",
+              "args"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "over"
+                  ]
+                },
+                {
+                  "required": [
+                    "bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallel"
+                  ]
+                },
+                {
+                  "required": [
+                    "expr"
+                  ]
+                },
+                {
+                  "required": [
+                    "prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "options"
+                  ]
+                },
+                {
+                  "required": [
+                    "show"
+                  ]
+                },
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "drop"
+                  ]
+                },
+                {
+                  "required": [
+                    "endorse"
+                  ]
+                },
+                {
+                  "required": [
+                    "component"
+                  ]
+                },
+                {
+                  "required": [
+                    "bind"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "map"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "capability",
+              "args",
+              "over",
+              "bound"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "expr"
+                  ]
+                },
+                {
+                  "required": [
+                    "prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "options"
+                  ]
+                },
+                {
+                  "required": [
+                    "show"
+                  ]
+                },
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "drop"
+                  ]
+                },
+                {
+                  "required": [
+                    "endorse"
+                  ]
+                },
+                {
+                  "required": [
+                    "component"
+                  ]
+                },
+                {
+                  "required": [
+                    "bind"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "expr"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "expr"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "when"
+                  ]
+                },
+                {
+                  "required": [
+                    "retry"
+                  ]
+                },
+                {
+                  "required": [
+                    "timeout_s"
+                  ]
+                },
+                {
+                  "required": [
+                    "capability"
+                  ]
+                },
+                {
+                  "required": [
+                    "args"
+                  ]
+                },
+                {
+                  "required": [
+                    "approval"
+                  ]
+                },
+                {
+                  "required": [
+                    "over"
+                  ]
+                },
+                {
+                  "required": [
+                    "bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallel"
+                  ]
+                },
+                {
+                  "required": [
+                    "prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "options"
+                  ]
+                },
+                {
+                  "required": [
+                    "show"
+                  ]
+                },
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "drop"
+                  ]
+                },
+                {
+                  "required": [
+                    "endorse"
+                  ]
+                },
+                {
+                  "required": [
+                    "component"
+                  ]
+                },
+                {
+                  "required": [
+                    "bind"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "ask"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "prompt"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "retry"
+                  ]
+                },
+                {
+                  "required": [
+                    "capability"
+                  ]
+                },
+                {
+                  "required": [
+                    "args"
+                  ]
+                },
+                {
+                  "required": [
+                    "approval"
+                  ]
+                },
+                {
+                  "required": [
+                    "over"
+                  ]
+                },
+                {
+                  "required": [
+                    "bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallel"
+                  ]
+                },
+                {
+                  "required": [
+                    "expr"
+                  ]
+                },
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "drop"
+                  ]
+                },
+                {
+                  "required": [
+                    "endorse"
+                  ]
+                },
+                {
+                  "required": [
+                    "component"
+                  ]
+                },
+                {
+                  "required": [
+                    "bind"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "declassify"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "value",
+              "drop",
+              "endorse"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "retry"
+                  ]
+                },
+                {
+                  "required": [
+                    "capability"
+                  ]
+                },
+                {
+                  "required": [
+                    "args"
+                  ]
+                },
+                {
+                  "required": [
+                    "approval"
+                  ]
+                },
+                {
+                  "required": [
+                    "over"
+                  ]
+                },
+                {
+                  "required": [
+                    "bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallel"
+                  ]
+                },
+                {
+                  "required": [
+                    "expr"
+                  ]
+                },
+                {
+                  "required": [
+                    "prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "options"
+                  ]
+                },
+                {
+                  "required": [
+                    "show"
+                  ]
+                },
+                {
+                  "required": [
+                    "component"
+                  ]
+                },
+                {
+                  "required": [
+                    "bind"
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        {
+          "if": {
+            "properties": {
+              "kind": {
+                "const": "view"
+              }
+            },
+            "required": [
+              "kind"
+            ]
+          },
+          "then": {
+            "required": [
+              "component",
+              "bind"
+            ],
+            "not": {
+              "anyOf": [
+                {
+                  "required": [
+                    "on_refuse"
+                  ]
+                },
+                {
+                  "required": [
+                    "retry"
+                  ]
+                },
+                {
+                  "required": [
+                    "timeout_s"
+                  ]
+                },
+                {
+                  "required": [
+                    "capability"
+                  ]
+                },
+                {
+                  "required": [
+                    "args"
+                  ]
+                },
+                {
+                  "required": [
+                    "approval"
+                  ]
+                },
+                {
+                  "required": [
+                    "over"
+                  ]
+                },
+                {
+                  "required": [
+                    "bound"
+                  ]
+                },
+                {
+                  "required": [
+                    "parallel"
+                  ]
+                },
+                {
+                  "required": [
+                    "expr"
+                  ]
+                },
+                {
+                  "required": [
+                    "prompt"
+                  ]
+                },
+                {
+                  "required": [
+                    "options"
+                  ]
+                },
+                {
+                  "required": [
+                    "show"
+                  ]
+                },
+                {
+                  "required": [
+                    "value"
+                  ]
+                },
+                {
+                  "required": [
+                    "drop"
+                  ]
+                },
+                {
+                  "required": [
+                    "endorse"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "unevaluatedProperties": false
+    }
+  }
+}

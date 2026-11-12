@@ -140,7 +140,11 @@
             "linguist-verify",
             "intent-plan",
             "time-resolve",
-            "duration-read"
+            "duration-read",
+            "expr-eval",
+            "plan-verify",
+            "plan-flows",
+            "plan-run"
           ]
         },
         "profile": {

@@ -251,7 +251,13 @@
             "profile-too-low",
             "legacy-forbidden",
             "proof-required",
-            "unavailable"
+            "unavailable",
+            "bad-input",
+            "bad-output",
+            "bound-exceeded",
+            "label-exceeds-static",
+            "quota-exceeded",
+            "too-large"
           ]
         },
         {

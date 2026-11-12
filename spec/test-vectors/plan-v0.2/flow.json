@@ -1,0 +1,1132 @@
+{
+  "category": "plan",
+  "description": "VKR-L3 v0.2 labels and flow lists (0003 section 5) before any rule or policy is applied.",
+  "vectors": [
+    {
+      "id": "plan.v02-flow.001",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "P3"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "who",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "args": {
+                "name": {
+                  "lit": "bea"
+                }
+              },
+              "on_refuse": "continue"
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "ref": "who",
+                  "field": "address"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:contacts.lookup",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "contacts"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "who": {
+              "value": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "note": {
+              "value": {
+                "classes": [
+                  "contacts",
+                  "documents"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "who",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "effect": "read",
+              "param": "name",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            {
+              "step": "note",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "effect": "write",
+              "param": "text",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "pc-through-continue-dependency: a consumer of an on_refuse: continue step takes that step's value label as control label"
+    },
+    {
+      "id": "plan.v02-flow.002",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "P3"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "who",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "args": {
+                "name": {
+                  "lit": "bea"
+                }
+              }
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "ref": "who",
+                  "field": "address"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:contacts.lookup",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "contacts"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "who": {
+              "value": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "note": {
+              "value": {
+                "classes": [
+                  "contacts",
+                  "documents"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "who",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "effect": "read",
+              "param": "name",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            {
+              "step": "note",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "effect": "write",
+              "param": "text",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [
+                  "contacts"
+                ],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "pc-through-stop-dependency: a consumer of an on_refuse: stop step takes only that step's control label"
+    },
+    {
+      "id": "plan.v02-flow.003",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "L-EXPR"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "E3"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              },
+              "on_refuse": "continue"
+            },
+            {
+              "id": "ok",
+              "kind": "expr",
+              "expr": "done(mails)"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "mails": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "ok": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "mails",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "effect": "read",
+              "param": "query",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "done-carries-step-label: done(x) carries L(x); a name used only inside done() is not a dependency"
+    },
+    {
+      "id": "plan.v02-flow.004",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "L-ASK"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "A3"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "pick",
+              "kind": "ask",
+              "prompt": "choose_one",
+              "options": {
+                "ref": "mails",
+                "field": "items"
+              }
+            },
+            {
+              "id": "first",
+              "kind": "expr",
+              "expr": "pick.index == 0"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "prompts": {
+          "choose_one": {
+            "options": true
+          },
+          "confirm_text": {
+            "options": false
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "mails": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "pick": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "index": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "trusted"
+              },
+              "chosen": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              }
+            },
+            "first": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "mails",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "effect": "read",
+              "param": "query",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            {
+              "step": "pick",
+              "sink": "ask",
+              "param": "options",
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "ask-index-trusted-value-keeps-label: the owner's choice is trusted; what was chosen keeps its label"
+    },
+    {
+      "id": "plan.v02-flow.005",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "L-DECL"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "A2"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "pick",
+              "kind": "ask",
+              "prompt": "choose_one",
+              "options": {
+                "ref": "mails",
+                "field": "items"
+              }
+            },
+            {
+              "id": "subject",
+              "kind": "declassify",
+              "value": {
+                "ref": "pick",
+                "field": "value.subject"
+              },
+              "drop": [
+                "communications.content"
+              ],
+              "endorse": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "prompts": {
+          "choose_one": {
+            "options": true
+          },
+          "confirm_text": {
+            "options": false
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "mails": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "pick": {
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "index": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "trusted"
+              },
+              "chosen": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              }
+            },
+            "subject": {
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "mails",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "effect": "read",
+              "param": "query",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            {
+              "step": "pick",
+              "sink": "ask",
+              "param": "options",
+              "value": {
+                "classes": [
+                  "communications.content"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "declassify-drops-and-endorses: declassify removes the dropped classes and, with endorse, yields trusted"
+    },
+    {
+      "id": "plan.v02-flow.006",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "5.1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "L-DECL"
+        }
+      ],
+      "operation": "plan-flows",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "drafts",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:draft.list",
+              "args": {}
+            },
+            {
+              "id": "n",
+              "kind": "expr",
+              "expr": "size(drafts.items)"
+            },
+            {
+              "id": "open",
+              "kind": "declassify",
+              "value": {
+                "ref": "n"
+              },
+              "drop": [
+                "finance"
+              ],
+              "endorse": false
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:draft.list",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "finance.documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "amount": {
+                        "type": "string",
+                        "format": "decimal"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "account",
+                      "amount"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ]
+      },
+      "expected": {
+        "value": {
+          "labels": {
+            "drafts": {
+              "value": {
+                "classes": [
+                  "finance.documents"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "n": {
+              "value": {
+                "classes": [
+                  "finance.documents"
+                ],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            },
+            "open": {
+              "value": {
+                "classes": [],
+                "integrity": "untrusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          },
+          "flows": [
+            {
+              "step": "drafts",
+              "sink": "capability",
+              "capability": "tag:vaikor.com,2026:capability:draft.list",
+              "effect": "read",
+              "param": "",
+              "role": "payload",
+              "quarantine": false,
+              "value": {
+                "classes": [],
+                "integrity": "trusted"
+              },
+              "pc": {
+                "classes": [],
+                "integrity": "trusted"
+              }
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "drop-covers-subclasses: a class covers its subclasses: dropping finance removes finance.documents"
+    }
+  ]
+}

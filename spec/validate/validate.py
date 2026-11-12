@@ -54,6 +54,8 @@ SCHEMA_NAMES = (
     "capability-descriptor",
     "capability-token",
     "plan",
+    "plan-v02",
+    "capability-descriptor-v02",
     "module-manifest",
     "privacy-report",
     "provider-manifest",
@@ -780,6 +782,8 @@ SEMANTIC = {
     "envelope": check_envelope,
     "capability-descriptor": check_capability_descriptor,
     "plan": check_plan,
+    "plan-v02": lambda document: [],  # semantics: plan_v02.py
+    "capability-descriptor-v02": check_capability_descriptor,
     "capability-token": check_token,
     "module-manifest": check_module_manifest,
     "provider-manifest": check_provider_manifest,

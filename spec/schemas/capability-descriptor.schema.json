@@ -46,6 +46,7 @@
       "uniqueItems": true,
       "items": {
         "enum": [
+          "compute",
           "read",
           "write",
           "delete",

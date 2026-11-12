@@ -2,7 +2,7 @@
 
 > **Status:** Draft v0.1. Implemented in `v0.2.0`: `runtime/vaikor-cli/src/linguist.rs`, `local-training/` (Model -1), `companion/vaikor-companion-core`, `companion/vaikor-companion-app`, `site/vaikor-wasm`.
 > **Date:** 2026-10-20
-> **Basis:** [VISION.md](../vision/VISION.md) section 5 (invariants 1–9), [0001-capability.md](0001-capability.md), [0003-plan.md](0003-plan.md), [0004-view.md](0004-view.md), [0009-models.md](0009-models.md), [0013-cbor-plans-ifc.md](0013-cbor-plans-ifc.md), [0016-companion-swiyu-iso27090.md](0016-companion-swiyu-iso27090.md).
+> **Basis:** [VISION.md](../vision/VISION.md) section 5 (invariants 1–9), [0001-capability.md](0001-capability.md), [0003-plan-v0.1.md](0003-plan-v0.1.md), [0004-view.md](0004-view.md), [0009-models.md](0009-models.md), [0013-cbor-plans-ifc.md](0013-cbor-plans-ifc.md), [0016-companion-swiyu-iso27090.md](0016-companion-swiyu-iso27090.md).
 > **Schemas:** [`intent-catalog.schema.json`](../../spec/schemas/intent-catalog.schema.json), [`linguist-envelope.schema.json`](../../spec/schemas/linguist-envelope.schema.json); UI catalog [`ui/a2ui-catalog.v4.json`](../../ui/a2ui-catalog.v4.json).
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as in BCP 14 (RFC 2119 and RFC 8174) when they appear in capitals.

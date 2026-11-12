@@ -1,0 +1,349 @@
+{
+  "category": "plan",
+  "description": "VKR-L3 v0.2 expression language (0003 section 3): typing, total evaluation, limits.",
+  "vectors": [
+    {
+      "id": "plan.v02-expr.001",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V2"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "a": {
+            "type": {
+              "type": "integer"
+            },
+            "value": 9223372036854775807
+          }
+        },
+        "expr": "a + 1 > 0"
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "undefined": true
+        }
+      },
+      "status": "normative",
+      "note": "overflow-is-undefined: i64 overflow is undefined, and undefined propagates through >"
+    },
+    {
+      "id": "plan.v02-expr.002",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V3"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "z": {
+            "type": {
+              "type": "integer"
+            },
+            "value": 0
+          }
+        },
+        "expr": "false && 1 / z == 1"
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "value": false
+        }
+      },
+      "status": "normative",
+      "note": "and-short-circuits-left-only: false && undefined is false; the right side is not evaluated"
+    },
+    {
+      "id": "plan.v02-expr.003",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V5"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "X-OPT"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "r": {
+            "type": {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "type": "string"
+                },
+                "note": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "a"
+              ],
+              "additionalProperties": false
+            },
+            "value": {
+              "a": "x"
+            }
+          }
+        },
+        "expr": "has(r.note) && r.note == \"y\""
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "value": false
+        }
+      },
+      "status": "normative",
+      "note": "has-guards-optional: has() on an absent optional field is false and guards the selection"
+    },
+    {
+      "id": "plan.v02-expr.004",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V6"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "a": {
+            "type": {
+              "type": "integer"
+            },
+            "value": -7
+          },
+          "b": {
+            "type": {
+              "type": "integer"
+            },
+            "value": 2
+          }
+        },
+        "expr": "[a / b, a % b, 7 / -2, 7 % -2]"
+      },
+      "expected": {
+        "value": {
+          "type": "list<int>[4]",
+          "value": [
+            -3,
+            -1,
+            -3,
+            1
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "division-truncates: / truncates towards zero and % takes the sign of the dividend"
+    },
+    {
+      "id": "plan.v02-expr.005",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V7"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {},
+        "expr": "dec(\"1.50\") == dec(\"1.5\")"
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "value": true
+        }
+      },
+      "status": "normative",
+      "note": "decimal-equality-is-numeric: decimal comparison ignores trailing fractional zeros"
+    },
+    {
+      "id": "plan.v02-expr.006",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "W-PARSE"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {},
+        "expr": "(((((((((((((((((1)))))))))))))))))"
+      },
+      "expected": {
+        "value": {
+          "error": "W-PARSE"
+        }
+      },
+      "status": "normative",
+      "note": "depth-17-rejected: 17 nested brackets exceed the depth limit of 16"
+    },
+    {
+      "id": "plan.v02-expr.007",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-EXPR"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {},
+        "expr": "1 + dec(\"1\")"
+      },
+      "expected": {
+        "value": {
+          "error": "T-EXPR"
+        }
+      },
+      "status": "normative",
+      "note": "int-decimal-do-not-mix: there is no implicit conversion between int and decimal"
+    },
+    {
+      "id": "plan.v02-expr.008",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V5"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "s": {
+            "type": {
+              "type": "object",
+              "properties": {
+                "x": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "x"
+              ],
+              "additionalProperties": false
+            },
+            "step": true,
+            "completed": false
+          }
+        },
+        "expr": "done(s)"
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "value": false
+        }
+      },
+      "status": "normative",
+      "note": "done-of-skipped-is-false: done() of a step that did not complete is false, never undefined"
+    },
+    {
+      "id": "plan.v02-expr.009",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V3"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {
+          "z": {
+            "type": {
+              "type": "integer"
+            },
+            "value": 0
+          }
+        },
+        "expr": "1 / z == 1 && false"
+      },
+      "expected": {
+        "value": {
+          "type": "bool",
+          "undefined": true
+        }
+      },
+      "status": "normative",
+      "note": "and-undefined-left-is-undefined: undefined && false is undefined: only the left side short-circuits"
+    },
+    {
+      "id": "plan.v02-expr.010",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "W-PARSE"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {},
+        "expr": "((((((((((((((((1))))))))))))))))"
+      },
+      "expected": {
+        "value": {
+          "type": "int",
+          "value": 1
+        }
+      },
+      "status": "normative",
+      "note": "depth-16-accepted: 16 nested brackets are within the limit"
+    },
+    {
+      "id": "plan.v02-expr.011",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "V7"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "3.4"
+        }
+      ],
+      "operation": "expr-eval",
+      "input": {
+        "env": {},
+        "expr": "sum([dec(\"0.10\"), dec(\"0.20\")])"
+      },
+      "expected": {
+        "value": {
+          "type": "decimal",
+          "value": "0.3"
+        }
+      },
+      "status": "normative",
+      "note": "decimal-sum-is-canonical: decimal results are rendered without trailing zeros"
+    }
+  ]
+}

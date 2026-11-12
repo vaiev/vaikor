@@ -1,0 +1,2242 @@
+{
+  "category": "plan",
+  "description": "VKR-L3 v0.2 static checks (0003 sections 4 and 5): typing, fixed flow rules H1 to H5, endorsement.",
+  "vectors": [
+    {
+      "id": "plan.v02-verify.001",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-ARGS"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "send",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:message.send",
+              "args": {
+                "to": {
+                  "lit": "contact:bea"
+                }
+              },
+              "approval": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:message.send",
+            "effects": [
+              "egress"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": true,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "to": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "T-ARGS",
+              "step": "send",
+              "param": "body"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "missing-required-arg: a required parameter without an argument is a static error"
+    },
+    {
+      "id": "plan.v02-verify.002",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "S5"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-ARGS"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "acct",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+              "args": {
+                "creditor": {
+                  "lit": "ACME AG"
+                },
+                "amount": {
+                  "lit": "12.50"
+                }
+              }
+            },
+            {
+              "id": "ok",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:entry.check",
+              "args": {
+                "entry": {
+                  "ref": "acct"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:entry.check",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "entry": {
+                  "type": "object",
+                  "properties": {
+                    "account": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "account"
+                  ],
+                  "additionalProperties": false
+                }
+              },
+              "required": [
+                "entry"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "ok": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "ok"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+            "effects": [
+              "compute"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "creditor": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                }
+              },
+              "required": [
+                "creditor",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "confidence": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "maximum": 1000
+                }
+              },
+              "required": [
+                "account",
+                "confidence"
+              ],
+              "additionalProperties": false
+            },
+            "model": {
+              "base": "sha256:abababababababababababababababababababababababababababababababab",
+              "adapter": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+              "max_tokens": 64
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "accept"
+        }
+      },
+      "status": "normative",
+      "note": "record-width-subtype-accepted: a record with extra fields is a subtype of the parameter record"
+    },
+    {
+      "id": "plan.v02-verify.003",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-PATH"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "cfg",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:settings.get",
+              "args": {}
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "ref": "cfg",
+                  "field": "nickname"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:settings.get",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {},
+              "required": [],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "enabled": {
+                  "type": "boolean"
+                },
+                "limit": {
+                  "type": "integer"
+                },
+                "owner": {
+                  "type": "string"
+                },
+                "nickname": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "enabled",
+                "limit",
+                "owner"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "T-PATH",
+              "step": "note"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "ref-through-optional-rejected: an argument cannot be taken through an optional field"
+    },
+    {
+      "id": "plan.v02-verify.004",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-PAR"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "each",
+              "kind": "map",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "over": {
+                "ref": "mails",
+                "field": "items"
+              },
+              "bound": 8,
+              "parallel": true,
+              "args": {
+                "text": {
+                  "item": true,
+                  "field": "subject"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "T-PAR",
+              "step": "each"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "parallel-on-write-rejected: parallel is allowed only for compute and read capabilities"
+    },
+    {
+      "id": "plan.v02-verify.005",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "P2"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "F1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H1"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "key",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:secrets.get",
+              "args": {
+                "name": {
+                  "lit": "api"
+                }
+              }
+            },
+            {
+              "id": "haskey",
+              "kind": "expr",
+              "expr": "size(key.value) > 0"
+            },
+            {
+              "id": "send",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:message.send",
+              "args": {
+                "to": {
+                  "lit": "contact:bea"
+                },
+                "body": {
+                  "lit": "ready"
+                }
+              },
+              "when": "haskey",
+              "approval": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:message.send",
+            "effects": [
+              "egress"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": true,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "to": "target"
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:secrets.get",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "secrets.api_key"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H1",
+              "step": "send",
+              "param": "body"
+            },
+            {
+              "code": "H1",
+              "step": "send",
+              "param": "to"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "h1-secret-in-when-to-egress: a secret that only decides whether an egress step runs still reaches it"
+    },
+    {
+      "id": "plan.v02-verify.006",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "L-CALL"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H2"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "addr",
+              "kind": "expr",
+              "expr": "mails.items[0].sender"
+            },
+            {
+              "id": "send",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:message.send",
+              "args": {
+                "to": {
+                  "ref": "addr"
+                },
+                "body": {
+                  "lit": "hello"
+                }
+              },
+              "approval": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:message.send",
+            "effects": [
+              "egress"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": true,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "to": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H2",
+              "step": "send",
+              "param": "to"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "h2-untrusted-recipient: an untrusted value cannot fill a target parameter of an egress capability"
+    },
+    {
+      "id": "plan.v02-verify.007",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "A1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H2"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "found",
+              "kind": "expr",
+              "expr": "size(mails.items) > 0"
+            },
+            {
+              "id": "addr",
+              "kind": "expr",
+              "expr": "mails.items[0].sender"
+            },
+            {
+              "id": "send",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:message.send",
+              "args": {
+                "to": {
+                  "ref": "addr"
+                },
+                "body": {
+                  "lit": "hello"
+                }
+              },
+              "when": "found",
+              "approval": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:message.send",
+            "effects": [
+              "egress"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": true,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "to": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H2",
+              "step": "send",
+              "param": "to"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "h2-not-lifted-by-approval: approval with provenance endorses the control label only; H3 is lifted, H2 is not"
+    },
+    {
+      "id": "plan.v02-verify.008",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "P2"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "F1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H3"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "found",
+              "kind": "expr",
+              "expr": "size(mails.items) > 0"
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "lit": "invoice arrived"
+                }
+              },
+              "when": "found"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H3",
+              "step": "note",
+              "param": "text"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "h3-direct-write-under-untrusted-when: untrusted data cannot decide whether a direct write happens"
+    },
+    {
+      "id": "plan.v02-verify.009",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H3"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "Q1"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "found",
+              "kind": "expr",
+              "expr": "size(mails.items) > 0"
+            },
+            {
+              "id": "draft",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:draft.put",
+              "args": {
+                "account": {
+                  "lit": "6500"
+                },
+                "amount": {
+                  "lit": "0.00"
+                }
+              },
+              "when": "found"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:draft.put",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "finance.documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "string",
+                  "format": "decimal"
+                }
+              },
+              "required": [
+                "account",
+                "amount"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "quarantine": true
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "accept"
+        }
+      },
+      "status": "normative",
+      "note": "h3-quarantine-write-accepted: under an untrusted control label a write to a quarantine capability is allowed"
+    },
+    {
+      "id": "plan.v02-verify.010",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "A1"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H3"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "found",
+              "kind": "expr",
+              "expr": "size(mails.items) > 0"
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "lit": "invoice arrived"
+                }
+              },
+              "when": "found",
+              "approval": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "accept"
+        }
+      },
+      "status": "normative",
+      "note": "h3-lifted-by-approval-provenance: approval: true under an untrusted control label becomes approval with provenance"
+    },
+    {
+      "id": "plan.v02-verify.011",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H4"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "key",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:secrets.get",
+              "args": {
+                "name": {
+                  "lit": "api"
+                }
+              }
+            },
+            {
+              "id": "open",
+              "kind": "declassify",
+              "value": {
+                "ref": "key",
+                "field": "value"
+              },
+              "drop": [],
+              "endorse": true
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:secrets.get",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "secrets.api_key"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H4",
+              "step": "open"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "declassify-secret-rejected: a value with a secret class cannot be declassified"
+    },
+    {
+      "id": "plan.v02-verify.012",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "F4"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H1"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "key",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:secrets.get",
+              "args": {
+                "name": {
+                  "lit": "api"
+                }
+              }
+            },
+            {
+              "id": "haskey",
+              "kind": "expr",
+              "expr": "size(key.value) > 0"
+            },
+            {
+              "id": "confirm",
+              "kind": "ask",
+              "prompt": "confirm_text",
+              "when": "haskey"
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:secrets.get",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "secrets.api_key"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "policy": "permit-all",
+        "prompts": {
+          "choose_one": {
+            "options": true
+          },
+          "confirm_text": {
+            "options": false
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H1",
+              "step": "confirm"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "ask-without-content-still-a-sink: an ask with neither options nor show still yields a flow, so a secret control label is caught"
+    },
+    {
+      "id": "plan.v02-verify.013",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H4"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "who",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "args": {
+                "name": {
+                  "lit": "bea"
+                }
+              }
+            },
+            {
+              "id": "open",
+              "kind": "declassify",
+              "value": {
+                "ref": "who",
+                "field": "address"
+              },
+              "drop": [
+                "secrets"
+              ],
+              "endorse": false
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:contacts.lookup",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "contacts"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H4",
+              "step": "open"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "declassify-drop-secret-rejected: drop cannot name a secret class, so a secret control label cannot be stripped"
+    },
+    {
+      "id": "plan.v02-verify.014",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "F3"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "H5"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "mails",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:mail.search",
+              "args": {
+                "query": {
+                  "lit": "invoice"
+                }
+              }
+            },
+            {
+              "id": "subj",
+              "kind": "expr",
+              "expr": "mails.items[0].subject"
+            },
+            {
+              "id": "card",
+              "kind": "view",
+              "component": "Card",
+              "bind": {
+                "title": {
+                  "lit": "Mail"
+                },
+                "link": {
+                  "ref": "subj"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:mail.search",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "query": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "query"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "items": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "subject": {
+                        "type": "string"
+                      },
+                      "sender": {
+                        "type": "string"
+                      },
+                      "note": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id",
+                      "subject",
+                      "sender"
+                    ],
+                    "additionalProperties": false
+                  },
+                  "maxItems": 8
+                }
+              },
+              "required": [
+                "items"
+              ],
+              "additionalProperties": false
+            }
+          }
+        ],
+        "policy": "permit-all",
+        "views": {
+          "Card": {
+            "props": {
+              "title": {
+                "schema": {
+                  "type": "string"
+                },
+                "kind": "text",
+                "required": true
+              },
+              "link": {
+                "schema": {
+                  "type": "string"
+                },
+                "kind": "url"
+              }
+            }
+          }
+        }
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "H5",
+              "step": "card",
+              "param": "link"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "h5-untrusted-value-in-url-prop: an untrusted value binds only to text props of a view"
+    },
+    {
+      "id": "plan.v02-verify.015",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "T-APPROVAL"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "send",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:message.send",
+              "args": {
+                "to": {
+                  "lit": "contact:bea"
+                },
+                "body": {
+                  "lit": "hello"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:message.send",
+            "effects": [
+              "egress"
+            ],
+            "data_classes": [
+              "communications.content"
+            ],
+            "consequential": true,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "to": {
+                  "type": "string"
+                },
+                "body": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "to",
+                "body"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "to": "target"
+            }
+          }
+        ],
+        "policy": "permit-all"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "T-APPROVAL",
+              "step": "send"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "consequential-needs-approval: carried over from v0.1 R7: a consequential capability requires approval: true"
+    },
+    {
+      "id": "plan.v02-verify.016",
+      "spec": [
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "5.6"
+        },
+        {
+          "doc": "L3",
+          "version": "0.2",
+          "section": "F-POLICY"
+        }
+      ],
+      "operation": "plan-verify",
+      "input": {
+        "plan": {
+          "v": "0.2",
+          "steps": [
+            {
+              "id": "who",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:contacts.lookup",
+              "args": {
+                "name": {
+                  "lit": "bea"
+                }
+              }
+            },
+            {
+              "id": "note",
+              "kind": "call",
+              "capability": "tag:vaikor.com,2026:capability:notes.append",
+              "args": {
+                "text": {
+                  "ref": "who",
+                  "field": "address"
+                }
+              }
+            }
+          ]
+        },
+        "catalog": [
+          {
+            "id": "tag:vaikor.com,2026:capability:contacts.lookup",
+            "effects": [
+              "read"
+            ],
+            "data_classes": [
+              "contacts"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "address"
+              ],
+              "additionalProperties": false
+            },
+            "integrity": "trusted"
+          },
+          {
+            "id": "tag:vaikor.com,2026:capability:notes.append",
+            "effects": [
+              "write"
+            ],
+            "data_classes": [
+              "documents"
+            ],
+            "consequential": false,
+            "cost": {
+              "class": "free"
+            },
+            "input_schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "text"
+              ],
+              "additionalProperties": false
+            },
+            "output_schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "id"
+              ],
+              "additionalProperties": false
+            },
+            "roles": {
+              "path": "target"
+            }
+          }
+        ],
+        "policy": "none"
+      },
+      "expected": {
+        "value": {
+          "verdict": "reject",
+          "problems": [
+            {
+              "code": "F-POLICY",
+              "step": "note",
+              "param": "text"
+            }
+          ]
+        }
+      },
+      "status": "normative",
+      "note": "no-policy-denies-labelled-flow: without a policy every flow whose label is not bottom is denied"
+    }
+  ]
+}

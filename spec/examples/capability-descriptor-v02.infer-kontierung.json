@@ -1,0 +1,56 @@
+{
+  "v": "0.2",
+  "id": "tag:vaikor.com,2026:capability:model.infer.kontierung",
+  "title": "Suggest a ledger account",
+  "description": "Classifies a creditor and an amount into an account of the owner's chart of accounts. Local inference with a pinned adapter.",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "creditor": {
+        "type": "string"
+      },
+      "amount": {
+        "type": "string",
+        "format": "decimal"
+      }
+    },
+    "required": [
+      "creditor",
+      "amount"
+    ],
+    "additionalProperties": false
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "account": {
+        "type": "string"
+      },
+      "confidence": {
+        "type": "integer",
+        "minimum": 0,
+        "maximum": 1000
+      }
+    },
+    "required": [
+      "account",
+      "confidence"
+    ],
+    "additionalProperties": false
+  },
+  "effects": [
+    "compute"
+  ],
+  "data_classes": [],
+  "consequential": false,
+  "cost": {
+    "class": "free"
+  },
+  "integrity": "untrusted",
+  "timeout_s": 20,
+  "model": {
+    "base": "sha256:abababababababababababababababababababababababababababababababab",
+    "adapter": "sha256:cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd",
+    "max_tokens": 64
+  }
+}

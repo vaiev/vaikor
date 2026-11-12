@@ -2,8 +2,8 @@
 
 > **Status:** Draft v0.1. Implemented in `runtime/vaikor-verify` (`dcbor.rs`, `stored.rs`, `flow.rs`). Vectors in `spec/test-vectors/plan/dcbor-signed.json` and `spec/test-vectors/plan-check/plan.flow.json`.
 > **Date:** 2026-10-15
-> **Spec:** VKR-L3 Plan (extension of [0003-plan.md](0003-plan.md))
-> **Basis:** [VISION.md](../vision/VISION.md) section 5 (invariants 1–5, 9), [0000-architektur.md](0000-architektur.md) plan language and VKR-L0, [0003-plan.md](0003-plan.md) R10–R11 and §7, [0002-grant.md](0002-grant.md), [0007-egress.md](0007-egress.md), [0011-agent-bundle.md](0011-agent-bundle.md), [0012-records.md](0012-records.md).
+> **Spec:** VKR-L3 Plan (extension of [0003-plan-v0.1.md](0003-plan-v0.1.md))
+> **Basis:** [VISION.md](../vision/VISION.md) section 5 (invariants 1–5, 9), [0000-architektur.md](0000-architektur.md) plan language and VKR-L0, [0003-plan-v0.1.md](0003-plan-v0.1.md) R10–R11 and §7, [0002-grant.md](0002-grant.md), [0007-egress.md](0007-egress.md), [0011-agent-bundle.md](0011-agent-bundle.md), [0012-records.md](0012-records.md).
 
 The key words MUST, MUST NOT, SHOULD, and MAY are to be interpreted as in BCP 14 (RFC 2119 and RFC 8174) when they appear in capitals.
 

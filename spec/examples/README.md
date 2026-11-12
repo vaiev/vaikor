@@ -52,6 +52,8 @@ Each invalid example changes one thing in a valid example. Examples were generat
 | `plan.duplicate-id.invalid.json` | Two steps share the id `free` (VKR-L3 R2). Semantic check |
 | `plan.forward-ref.invalid.json` | `send` references `later`, which has not run yet (VKR-L3 R4). Semantic check |
 | `plan.map-bound-zero.invalid.json` | `map.bound` is 0. The minimum is 1 (VKR-L3 R6) |
+| `plan-v02.inline-expression-in-when.invalid.json` | `when` holds an expression. It must be the id of an earlier `expr` step (VKR-L3 v0.2, 1.3) |
+| `capability-descriptor-v02.quarantine-with-delete.invalid.json` | `quarantine` with an effect other than `write` (VKR-L3 v0.2, Q1) |
 | `capability-descriptor.delete-not-consequential.invalid.json` | `delete` with `consequential` false (VKR-L1 R9). Semantic check |
 | `capability-descriptor.egress-without-data-class.invalid.json` | `egress` with an empty `data_classes` array (VKR-L1 R10). Semantic check |
 | `capability-descriptor.unknown-effect.invalid.json` | Effect `observe` is not in registries/effects.md (VKR-L1 R6) |
