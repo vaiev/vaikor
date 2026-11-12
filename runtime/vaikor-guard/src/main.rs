@@ -627,7 +627,7 @@ fn read_seed(path: Option<&str>) -> Result<Option<[u8; 32]>, String> {
 }
 
 fn unhex(text: &str) -> Result<Vec<u8>, String> {
-    if text.len() % 2 != 0 {
+    if !text.len().is_multiple_of(2) {
         return Err("odd hex".into());
     }
     let mut out = Vec::with_capacity(text.len() / 2);

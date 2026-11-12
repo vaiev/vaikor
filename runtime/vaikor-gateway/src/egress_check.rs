@@ -122,7 +122,7 @@ fn luhn(digits: &[u32]) -> bool {
             }
         })
         .sum();
-    sum % 10 == 0
+    sum.is_multiple_of(10)
 }
 
 /// Detector ids that match the NFKC-normalized text (R11 D, R12).
