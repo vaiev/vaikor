@@ -68,6 +68,8 @@ limit. *Prototype*: code and tests exist, not wired into a running product path.
 | Local mode (`VAIKOR_LOCAL=1`) | partial | gateway egress, the approval channel and the swarm mesh refuse; no kernel-level filter; see invariant 7 for the model connection |
 | Workspace containment | partial | `<workspace>/files` is opened once as a directory handle (refused when it is a symlink or not owned by the Core uid) and every workspace file operation resolves beneath it with Linux `openat2(RESOLVE_BENEATH \| RESOLVE_NO_SYMLINKS)` (`runtime/vaikor-cli/src/contained.rs`), so a symlink or rename raced into the tree cannot lead outside; files with more than one hard link are refused; timers and reminders change under a lock with atomic replace, task records go through the record store; no OS sandbox |
 | Model -1 linguist | implemented | `vaikor task`, companion desktop and Android; the deployed weights emit the full v0.1 envelope. The compact v0.2 proposal with catalog-constrained decoding (0017 L3a, L8) is in the Core and selected by `model.output`, and no deployed weights use it yet |
+| Plan language v0.2 (templates, labels, lanes) | specified | [0003-plan.md](docs/specs/0003-plan.md); 40 vectors in `spec/test-vectors/plan-v0.2/` checked by the Python reference checker `spec/validate/plan_v02.py`. The vectors come from that one implementation; the Rust verifier implements v0.1 ([track A, phase 3](docs/ROADMAP.md)) |
+| Crate layering | partial | `runtime/layers.toml` and `tools/layercheck.py` run in CI: no new edge against the layer order, eight recorded exceptions that may only shrink ([track A](docs/ROADMAP.md)); `unsafe` is forbidden in `vaikor-core`, `-capability`, `-grant`, `-record`, `-verify`, `-mcp` |
 | Model 0, Model 1 | prototype | training code in `local-training/`; not on the runtime path ([WP 11d](docs/ROADMAP.md)) |
 | Hybrid cloud planning | specified | 0009; `vaikor task --hybrid` refuses |
 | Swarm (0015) | prototype | enrollment, handshake, envelopes, drift revocation as library functions with tests, behind the `vaikor-cli` feature `experimental` (off by default, with the signed-adapter prototype and `vaikor swarm measure`) until v0.5 rebuilds them on the one engine; no multi-device run ([WP 19 to 21](docs/ROADMAP.md)) |
@@ -252,7 +254,8 @@ no approval controls; approval happens only on the Core's Unix socket:
 - [`0000-architektur.md`](docs/specs/0000-architektur.md) — Architecture Decisions (`E1–E9`) & System Overview
 - [`0001-capability.md`](docs/specs/0001-capability.md) — `VKR-L0` / `VKR-L1`: Core Objects, Capability Descriptor & MCP Binding
 - [`0002-grant.md`](docs/specs/0002-grant.md) — `VKR-L2`: Capability Grants, Attenuation, Budgets & Cedar Policy
-- [`0003-plan.md`](docs/specs/0003-plan.md) — `VKR-L3`: Declarative Plan Language v0 & Static Verifier
+- [`0003-plan-v0.1.md`](docs/specs/0003-plan-v0.1.md) — `VKR-L3` v0.1: Declarative Plan Language & Static Verifier (what `vaikor-verify` implements)
+- [`0003-plan.md`](docs/specs/0003-plan.md) — `VKR-L3` v0.2 (draft): plan templates, typed expressions, labels and flow rules, lanes; reference checker and vectors, no Rust implementation yet
 - [`0004-view.md`](docs/specs/0004-view.md) — `VKR-L4`: Declarative A2UI Views & Core-Owned Trusted UI (`SO_PEERCRED`)
 - [`0005-core.md`](docs/specs/0005-core.md) — `VKR-L5`: Core Contract, Kill Switch & Hash-Chained Audit Log
 - [`0006-exchange.md`](docs/specs/0006-exchange.md) — `VKR-L6`: Trust-Boundary Envelopes & Peer-to-Peer Exchange

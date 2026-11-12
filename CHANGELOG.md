@@ -9,7 +9,20 @@ The first public preview, `v0.3.0-preview.1`, is a snapshot of this section: v0.
 interfaces will still change. The public history starts with that tag; earlier development happened in a private
 repository. 0.3.0 itself follows when the v0.3.0 section of [docs/ROADMAP.md](docs/ROADMAP.md) is done.
 
+### Added
+- **Track A, phase 1 (runtime architecture).** `runtime/layers.toml` and `tools/layercheck.py` check the crate tiers
+  in CI: a new dependency against the tier order fails, and the eight recorded exceptions may only shrink.
+  `#![forbid(unsafe_code)]` in `vaikor-core`, `-capability`, `-grant`, `-record`, `-verify` and `-mcp`. A
+  non-blocking `wasm32-unknown-unknown` build of the two lowest tiers. The plan is in
+  [docs/ROADMAP.md](docs/ROADMAP.md), track A.
+- **VKR-L3 v0.2 (draft).** [0003-plan.md](docs/specs/0003-plan.md) specifies plan templates with inputs, a total
+  expression language, labels with integrity, flow rules, lanes and A2UI 1.0 catalogs; schemas `plan-v02` and
+  `capability-descriptor-v02`, the effect `compute`, six refusal reasons, 40 vectors in
+  `spec/test-vectors/plan-v0.2/` (suite 0.14.0) and the reference checker `spec/validate/plan_v02.py`. The Rust
+  verifier still implements v0.1, whose text is now [0003-plan-v0.1.md](docs/specs/0003-plan-v0.1.md).
+
 ### Changed
+- **Toolchain 1.97.** The pin moves from Rust 1.89 to 1.97; the crates' `rust-version` stays 1.89.
 - **Sidged is now Vaikor.** The project, the binary (`vaikor`), the crates (`vaikor-*`), the environment
   variables (`VAIKOR_*`) and the Android app id (`com.vaikor.companion`) carry the new name. Identifiers change
   without aliases while the project is pre-alpha: capability and record ids move from the unregistered URN

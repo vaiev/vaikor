@@ -1,11 +1,102 @@
 # Vaikor roadmap: v0.2.0 to v1.0.0
 
-> **Date:** 2026-10-20. **Status of this document:** plan, revised at every release.
+> **Date:** 2026-11-12. **Status of this document:** plan, revised at every release.
 > **North star:** [vision/VISION.md](vision/VISION.md). **Specifications:** [specs/](specs/).
 
 Every release keeps the nine invariants and the contract suite green (`cargo test`/`clippy` for `runtime/`,
 `companion/` and `site/`, `spec/validate`, `local-training/tests`, the shell checks under `scripts/`). A work package
 (WP) is done when its exit criteria are met by tests, not by description.
+
+## Track A: runtime architecture (parallel to the releases)
+
+The releases below add product paths. Track A changes how the runtime is built, so that the claims of the nine
+invariants rest on structure a compiler or CI job checks and not on review. It has four phases. A phase is done when
+its gate is green in CI.
+
+Crate tiers are named L0 to L3 in `runtime/layers.toml`. They are not the specification layers VKR-L0 to VKR-L8.
+
+| Tier | Crates (target) | May depend on | Rule |
+|---|---|---|---|
+| L0 | `vaikor-base`, `vaikor-core` | nothing in the workspace | no I/O, no clock, no `unsafe`, builds for `wasm32-unknown-unknown` |
+| L1 | `vaikor-capability`, `vaikor-grant`, `vaikor-record`, `vaikor-plan` (today `vaikor-verify`) | L0 | pure decisions over values, same build rule as L0 |
+| L2 | `vaikor-engine`, `vaikor-log`, `vaikor-store`, `vaikor-gateway` | L0, L1 | the only tier that opens OS resources, and only against an effect permit |
+| L3 | `vaikor-node`, `vaikor-models`, `vaikor-swarm` | L0 to L2 | composition, model serving, devices; no security decision of its own |
+
+### Phase 1: make the structure checkable (done 2026-11-12)
+
+| Item | Content | Gate |
+|---|---|---|
+| P1-1 | Toolchain pin raised from 1.89 to 1.97, clippy clean on `runtime/`, `companion/` core and `site/` | `cargo clippy -- -D warnings` |
+| P1-2 | `runtime/layers.toml` and `tools/layercheck.py`: tier order, forbidden crates per tier, and a list of eight known violations that may only shrink (a new one fails, a fixed one that is still listed fails) | `layer check` step in `rust-ci.yml` |
+| P1-3 | `#![forbid(unsafe_code)]` in `vaikor-core`, `-capability`, `-grant`, `-record`, `-verify`, `-mcp` | compiler |
+| P1-4 | One definition of a sensitive data class in `vaikor-verify` (`flow::is_sensitive_class`); the second copy in `plan.rs` is removed | tests |
+| P1-5 | VKR-L3 v0.2 as text, schemas, registries, 40 vectors and a Python reference checker ([0003-plan.md](specs/0003-plan.md)); the v0.1 text stays as [0003-plan-v0.1.md](specs/0003-plan-v0.1.md) | `spec/validate` (54 tests) |
+| P1-6 | `wasm32-unknown-unknown` build of L0 and L1 in CI | not blocking yet: the step is `continue-on-error` until its first green run on a runner (it could not be run where it was written) |
+
+Known limits of phase 1: the v0.2 vectors were produced by the one reference checker, so they prove that text and
+checker agree, not that either is right. A published copy of the schemas (vaikor.com `/spec/`) must be refreshed for
+`check_published.py` to pass.
+
+### Phase 2: extract L0 to L2, rebuild L3
+
+L0 to L2 are extracted from the existing crates, with their tests. L3 is written new: `vaikor-node` replaces
+`vaikor-cli` as the composition root and takes only the parts that have proven themselves (WebAuthn verification, the
+GGUF header parser, the hardened approval channel). `vaikor-cli` is frozen as the legacy host from the first P2 item
+on: bug fixes only, and it is deleted at the end of the phase.
+
+| Item | Content | Removes exception |
+|---|---|---|
+| P2-1 | `vaikor-base`: digests, ids, error and refusal types, the `Clock` trait | |
+| P2-2 | `vaikor-record` without grants, log or gateway: it encodes, signs and verifies, nothing else | record→grant, record→log, record→gateway (dev) |
+| P2-3 | Time is a parameter: no `now()` in L0 or L1, the clock is handed in at the composition root | chrono/clock, chrono/now |
+| P2-4 | `vaikor-verify` becomes `vaikor-plan`; it emits a flow graph, and `vaikor-grant` evaluates a flow policy over that graph, so neither crate knows the other | verify→grant, verify→record |
+| P2-5 | MCP binding out of the decision tier: `vaikor-mcp` maps descriptors and no longer reaches into the registry | mcp→capability |
+| P2-6 | `EffectPermit` in `vaikor-core`: Ed25519-signed claim over dCBOR (instance digest, step, element, attempt, capability, argument digest, expiry), not `Clone`, consumed by `redeem(self)`; one `PermitMinter` created at the composition root | CI seal: `PermitMinter::pair` is called in exactly one place |
+| P2-7 | `vaikor-gateway` opens a connection only against a redeemed permit | |
+| P2-8 | `vaikor-store` writes only against a redeemed permit | |
+| P2-9 | `vaikor-engine` (L2), extracted from `vaikor-cli/src/engine.rs`: audit before effect, reservation, permit minting per attempt | |
+| P2-10 | The wasm32 build of L0 and L1 becomes blocking; the exception list in `layers.toml` is empty | |
+| P2-11 | `vaikor-node` (L3): one binary, runs headless as a service (VM image, OCI container, host), approval over the Core-owned socket; `vaikor run`, `guard`, `task` become subcommands of it | |
+| P2-12 | `local-training/` moves to its own repository (`vaikor-intelligence`); this repository keeps the release gate and the manifests of the models it ships | |
+
+Gate: `layercheck` reports zero known violations, every effect in L2 takes a permit by value, the existing suite
+(644 workspace tests on 2026-11-12) is green on the new crates, and the size of the trusted set (L0 to L2, lines and
+dependencies) is published in the README.
+
+### Phase 3: plan language v0.2 in the Core
+
+| Item | Content | Gate |
+|---|---|---|
+| P3-1 | Expression language (types, total evaluation, `undefined`) in `vaikor-plan` | `expr-eval` vectors |
+| P3-2 | Verifier for v0.2: templates with `inputs`, the six step kinds, problem codes in order | `plan-verify` vectors |
+| P3-3 | Labels and flows: classes with prefix covering, integrity, `pc`, fixed rules, endorsement and quarantine | `plan-flows` vectors; property tests against the Python checker |
+| P3-4 | Engine: lanes (internal, read, airlock), buffered audit with sync points, retries with a fresh permit per attempt | `plan-run` vectors |
+| P3-5 | `model.infer` descriptors and host-computed confidence in `vaikor-models`; the model proposes, the template decides | recorded-reply tests |
+| P3-6 | Catalog templates of the twelve intents migrated from v0.1 to v0.2; the v0.1 parser is removed | 0017 vectors |
+
+Gate: all vectors pass in Rust and in Python, and the two are compared on generated plans (differential test). From
+here the vectors have two implementations. `ask` and `view` use A2UI 1.0 catalogs under the restrictions of 0003 §7.3.
+
+### Phase 4: enforcement and a node others can run
+
+| Item | Content | Gate |
+|---|---|---|
+| P4-1 | Modules as WASI 0.3 components (Wasmtime, async component model): a module receives only the handles its permit names | a module without a permit has no import to call |
+| P4-2 | Native adapters under an OS sandbox (Landlock and seccomp, bubblewrap where available); closes the status of invariant 6 | escape tests per adapter |
+| P4-3 | Approval with provenance: the Trusted UI shows what a value was derived from and its integrity; passkeys first, swiyu when the public infrastructure is live | 0016 vectors |
+| P4-4 | Quarantine sinks and `declassify` end to end on the node | a labelled value cannot reach egress without a recorded release |
+| P4-5 | Reference node: VM disk image and OCI image that take a signed template, run it offline, and export a record the browser verifier accepts | `scripts/build-vm-disk.sh`, container CI |
+| P4-6 | External review of L0 to L2 and the threat model against ISO/IEC 27090 (guidance, not a certificate) | report published |
+
+### How the track meets the releases
+
+| Release | Track A |
+|---|---|
+| v0.3.0 | Phase 1 (done), P2-1 to P2-5 |
+| v0.4.0 | P2-6 to P2-12; the Trusted UI work packages build on `vaikor-node` |
+| v0.5.0 | Phase 3; the swarm work packages use v0.2 plans and permits across devices |
+| v0.6.0 | P4-1, P4-2, P4-5 with the model and module packages |
+| v0.7.0 to v0.9.0 | P4-3, P4-4, P4-6 |
 
 ## v0.2.0: intent, canvas and browser verifier (current)
 
